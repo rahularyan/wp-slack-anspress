@@ -3,10 +3,15 @@
 Integrate Anspress events for sending notifications to Slack.
 
 **Contributors:** [rachelwhitton](https://github.com/rachelwhitton), [bmackinney](https://github.com/bmackinney)
-    **Tags:** [slack](http://wordpress.org/plugins/tags/slack), [api](http://wordpress.org/plugins/tags/api), [chat](http://wordpress.org/plugins/tags/chat), [notification](http://wordpress.org/plugins/tags/notification), [anspress](https://wordpress.org/plugins/tags/anspress)
+
+**Tags:** [slack](http://wordpress.org/plugins/tags/slack), [api](http://wordpress.org/plugins/tags/api), [chat](http://wordpress.org/plugins/tags/chat), [notification](http://wordpress.org/plugins/tags/notification), [anspress](https://wordpress.org/plugins/tags/anspress)
+
 **Requires at least:** 3.6
+
 **Tested up to:** 3.8.1
+
 **Stable tag:** trunk (master)
+
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 
 ## Description
