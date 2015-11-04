@@ -8,10 +8,6 @@ Integrate Anspress events for sending notifications to Slack.
 
 **Requires at least:** 3.6
 
-**Tested up to:** 3.8.1
-
-**Stable tag:** trunk (master)
-
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 
 ## Description
