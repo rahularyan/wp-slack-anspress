@@ -39,8 +39,9 @@ function wp_slack_anspress_user_reg( $events ) {
         // Message delivered in Slack channel.
         'message' => function( $user_id ) {
             sprintf(__('[%s] just created a Questions profile. :boom:', 'slack' ), $user_email);
-            }
-return $events;
+        }
+    );
+    return $events;
 }
 add_filter( 'slack_get_events', 'wp_slack_anspress_user_reg' );
 ?>
