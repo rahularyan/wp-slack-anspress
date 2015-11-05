@@ -28,20 +28,32 @@
 *
 * @filter slack_get_events
 */
-function wp_slack_anspress_user_reg( $events ) {
-    $events['user_register'] = array(
-        // WP core hook for user registrations. user_register is located in /wp-includes/user.php within the function wp_insert_user()
-        'action' => 'user_register',
+add_filter( 'slack_get_events', function( $events ) {
+    $events['pio_ap_question_published'] = array(
+        'action'      => 'transition_post_status',
+        'description' => __( 'When a question/answer is published', 'slack' ),
+        'message'     => function( $new_status, $old_status, $post ) {
+            $pio_ap_notified_post_types = apply_filters( 'pio_ap_slack_event_transition_post_status', array(
+                'question', 'answer',
+            ) );
 
-        // Description within the integration setting.
-        'description' => __( 'When a user registers', 'slack' ),
+            if ( ! in_array( $post->post_type, $pio_ap_notified_post_types ) ) {
+                return false;
+            }
 
-        // Message delivered in Slack channel.
-        'message' => function( $user_id ) {
-            sprintf(__('[%s] just created a Questions profile. :boom:', 'slack' ), $user_email);
+            if ( 'publish' !== $old_status && 'publish' === $new_status ) {
+                return sprintf(
+                'New *%1%s* published: *<%2$s|%3$s>* by *%4$s*' . "\n" .
+                '> %4$s',
+                get_post_type( $post->post_type ),
+                get_permalink( $post->ID ),
+                get_the_title( $post->ID ),
+                get_the_author_meta( 'display_name', $post->post_author ),
+            );
         }
-    );
-    return $events;
+    }
+);
+return $events;
 }
-add_filter( 'slack_get_events', 'wp_slack_anspress_user_reg' );
+);
 ?>
