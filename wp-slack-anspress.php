@@ -28,8 +28,8 @@
 *
 * @filter slack_get_events
 */
-add_filter( 'slack_get_events', function( $events ) {
-    $events['pio_ap_question_published'] = array(
+function pio_ap_slack_published ( $events ) {
+    $events['pio_ap_published'] = array(
         'action'      => 'transition_post_status',
         'description' => __( 'When a question/answer is published', 'slack' ),
         'message'     => function( $new_status, $old_status, $post ) {
@@ -42,18 +42,52 @@ add_filter( 'slack_get_events', function( $events ) {
             }
 
             if ( 'publish' !== $old_status && 'publish' === $new_status ) {
-                return sprintf(
-                'New *%1%s* published: *<%2$s|%3$s>* by *%4$s*' . "\n" .
-                '> %4$s',
+                return apply_filters( 'pio_ap_pending_review_message',
+                sprintf(
+                __( 'New *%1$s* published: *<%2$s|%3$s>* by *%4$s*' . "\n" . '> %4$s'),
                 get_post_type( $post->post_type ),
                 get_permalink( $post->ID ),
                 get_the_title( $post->ID ),
-                get_the_author_meta( 'display_name', $post->post_author ),
-            );
-        }
+                get_the_author_meta( 'display_name', $post->post_author )
+            )
+        );
     }
+}
 );
 return $events;
 }
+add_filter( 'slack_get_events', 'pio_ap_slack_published' );
+
+function pio_ap_slack_pending ( $events ) {
+    $events['pio_ap_pending_review'] = array(
+        'action'      => 'transition_post_status',
+        'description' => __( 'When a question/answer needs review', 'slack' ),
+        'message'     => function( $new_status, $old_status, $post ) {
+            $pio_ap_notified_post_types = apply_filters( 'pio_ap_slack_event_transition_post_status', array(
+                'question', 'answer',
+            ) );
+
+            if ( ! in_array( $post->post_type, $pio_ap_notified_post_types ) ) {
+                return false;
+            }
+
+            if ( 'pending' !== $old_status && 'pending' === $new_status ) {
+                return apply_filters( 'pio_ap_pending_review_message',
+                sprintf(
+                __( 'New *%1$* needs review: *<%2$s|%3$s>* by *%4$s*',
+                get_post_type( $post->post_type ),
+                admin_url( sprintf( 'post.php?post=%d&action=edit', $post->ID ) ),
+                get_the_title( $post->ID ),
+                get_the_author_meta( 'display_name', $post->post_author )
+            )
+        )
+    );
+    }
+}
 );
+return $events;
+}
+add_filter( 'slack_get_events', 'pio_ap_slack_pending' );
+
+
 ?>
